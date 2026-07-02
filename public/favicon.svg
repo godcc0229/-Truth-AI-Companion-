@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+  </defs>
+  <!-- Mirror shape -->
+  <ellipse cx="50" cy="46" rx="32" ry="38" fill="url(#g)" opacity="0.85"/>
+  <ellipse cx="50" cy="46" rx="24" ry="30" fill="#0f0f1a"/>
+  <!-- Reflection accent -->
+  <ellipse cx="42" cy="36" rx="6" ry="10" fill="url(#g)" opacity="0.3" transform="rotate(-15 42 36)"/>
+  <!-- T letterform -->
+  <text x="50" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="32" font-weight="bold" fill="url(#g)">T</text>
+</svg>
