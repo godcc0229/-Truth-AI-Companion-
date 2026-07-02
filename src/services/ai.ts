@@ -14,7 +14,7 @@ function getClient(apiKey: string): OpenAI {
   if (!client || client.apiKey !== apiKey) {
     client = new OpenAI({
       apiKey,
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.deepseek.com/v1',
       dangerouslyAllowBrowser: true, // 纯前端直连
     });
   }
@@ -160,23 +160,32 @@ export async function sendMessage(options: SendMessageOptions): Promise<{
         }
         throw new Error('思考超时，请重试');
       }
-      // 尝试解析 API 错误
-      const apiErr = err as { status?: number; code?: string };
-      if (apiErr.status === 401 || apiErr.code === 'invalid_api_key') {
-        throw new Error('API Key 无效，请检查后重试');
+
+      // 尝试提取 OpenAI SDK 的 APIError 信息
+      const apiErr = err as { status?: number; code?: string; message?: string; error?: { message?: string; type?: string } };
+      const rawMessage = apiErr.error?.message || apiErr.message || '';
+
+      if (apiErr.status === 401) {
+        throw new Error(`API Key 无效：${rawMessage}`);
       }
-      if (apiErr.status === 402 || apiErr.code === 'insufficient_balance') {
-        throw new Error('你的 DeepSeek API 账户余额不足');
+      if (apiErr.status === 402) {
+        throw new Error(`余额不足：${rawMessage}`);
       }
-      if (apiErr.status === 429 || apiErr.code === 'rate_limit') {
+      if (apiErr.status === 429) {
         throw new Error('API 调用频率过高，请稍后再试');
       }
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      if (apiErr.status === 403) {
+        throw new Error(`访问被拒绝：${rawMessage}`);
+      }
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('fetch failed')) {
         throw new Error('网络连接失败，请检查网络');
       }
+
+      // 兜底：返回真实错误信息帮助排查
+      throw new Error(`API 错误：${rawMessage || err.message}`);
     }
 
-    throw new Error(`AI 服务异常：${err instanceof Error ? err.message : '未知错误'}`);
+    throw new Error(`AI 服务异常：${String(err)}`);
   } finally {
     clearTimeout(timeoutId);
   }
