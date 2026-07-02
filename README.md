@@ -49,8 +49,8 @@ AI 在对话中自动发现重复模式、认知转变、判断修正时，输�
 
 ```bash
 # 1. Clone
-git clone https://github.com/weidejia/truth-ai-companion.git
-cd truth-ai-companion
+git clone https://github.com/godcc0229/-Truth-AI-Companion-.git
+cd -Truth-AI-Companion-
 
 # 2. Install
 npm install
